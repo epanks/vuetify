@@ -3,7 +3,40 @@
         <v-content>
             <v-container class="fill-height" fluid>
                 <v-row align="center" justify="center">
-                    <v-col></v-col>
+                    <v-col cols="12" sm="8" md="4">
+                        <v-card class="elevation-12">
+                            <v-toolbar color="error" dark flat>
+                                <v-toolbar-title>Login Form</v-toolbar-title>
+                                <v-spacer />
+                            </v-toolbar>
+                            <v-card-text>
+                                <v-form>
+                                    <v-text-field
+                                        label="Login"
+                                        name="login"
+                                        v-model="email"
+                                        prepend-icon="mdi-email-outline"
+                                        type="email"
+                                    />
+
+                                    <v-text-field
+                                        id="password"
+                                        label="Password"
+                                        v-model="password"
+                                        name="password"
+                                        prepend-icon="mdi-account-lock-outline"
+                                        type="password"
+                                    />
+                                </v-form>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer />
+                                <v-btn color="error" @click="login"
+                                    >Login</v-btn
+                                >
+                            </v-card-actions>
+                        </v-card>
+                    </v-col>
                 </v-row>
             </v-container>
         </v-content>
@@ -11,7 +44,19 @@
 </template>
 
 <script>
-export default {};
+export default {
+    data() {
+        return {
+            email: "",
+            password: ""
+        };
+    },
+    methods: {
+        login: function() {
+            localStorage.setItem("token", "2121223231231312");
+        }
+    }
+};
 </script>
 
 <style scoped></style>
