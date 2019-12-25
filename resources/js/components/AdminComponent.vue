@@ -55,14 +55,16 @@
 export default {
   props: {
     source: String,
-    snackbar: false,
     text: ""
   },
   data: () => ({
-    drawer: null
+    drawer: null,
+    snackbar: false
   }),
-  created() {
-    this.snackbar = true;
+  created() {},
+  mounted() {
+    this.snackbar = localStorage.getItem("loggedIn") ? true : false;
+    localStorage.removeItem("loggedIn");
   },
   methods: {
     logout: function() {
