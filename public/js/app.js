@@ -1878,14 +1878,45 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    source: String
+    source: String,
+    snackbar: false,
+    text: ""
   },
   data: function data() {
     return {
       drawer: null
     };
+  },
+  created: function created() {
+    this.snackbar = true;
+  },
+  methods: {
+    logout: function logout() {
+      var _this = this;
+
+      localStorage.removeItem("token");
+      this.$router.push("/login").then(function (res) {
+        _this.text = "You are Logged Out Successfully";
+        _this.snackbar = true;
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    }
   }
 });
 
@@ -1966,16 +1997,67 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       email: "",
-      password: ""
+      password: "",
+      loading: false,
+      snackbar: false,
+      text: ""
     };
   },
+  // created(){
+  //     this.$vuetify.theme.dark = true;
+  // },
   methods: {
     login: function login() {
-      localStorage.setItem("token", "2121223231231312");
+      var _this = this;
+
+      // Add a request interceptor
+      axios.interceptors.request.use(function (config) {
+        _this.loading = true;
+        return config;
+      }, function (error) {
+        _this.loading = false;
+        return Promise.reject(error);
+      }); // Add a response interceptor
+
+      axios.interceptors.response.use(function (response) {
+        _this.loading = false;
+        return response;
+      }, function (error) {
+        _this.loading = false;
+        return Promise.reject(error);
+      });
+      axios.post("/api/login", {
+        email: this.email,
+        password: this.password
+      }).then(function (res) {
+        //console.dir(res);
+        localStorage.setItem("token", res.data.token);
+
+        _this.$router.push("/admin").then(function (res) {
+          return console.log("LoggedIn Succesfully");
+        })["catch"](function (err) {
+          return console.log(err);
+        });
+      })["catch"](function (err) {
+        _this.text = err.response.data.status;
+        _this.snackbar = true;
+      });
     }
   }
 });
@@ -19660,6 +19742,25 @@ var render = function() {
                   )
                 ],
                 1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-list-item",
+                { attrs: { link: "" }, on: { click: _vm.logout } },
+                [
+                  _c(
+                    "v-list-item-action",
+                    [_c("v-icon", [_vm._v("mdi-settings")])],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-list-item-content",
+                    [_c("v-list-item-title", [_vm._v("Logout")])],
+                    1
+                  )
+                ],
+                1
               )
             ],
             1
@@ -19696,7 +19797,47 @@ var render = function() {
               _c(
                 "v-row",
                 { attrs: { align: "center", justify: "center" } },
-                [_c("v-col", { staticClass: "text-center" })],
+                [
+                  _c(
+                    "v-col",
+                    { staticClass: "text-center" },
+                    [
+                      _c(
+                        "v-snackbar",
+                        {
+                          model: {
+                            value: _vm.snackbar,
+                            callback: function($$v) {
+                              _vm.snackbar = $$v
+                            },
+                            expression: "snackbar"
+                          }
+                        },
+                        [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(_vm.text) +
+                              "\n            "
+                          ),
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "pink", text: "" },
+                              on: {
+                                click: function($event) {
+                                  _vm.snackbar = false
+                                }
+                              }
+                            },
+                            [_vm._v("Close")]
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
                 1
               )
             ],
@@ -19796,11 +19937,22 @@ var render = function() {
                           _c(
                             "v-card-text",
                             [
+                              _c("v-progress-linear", {
+                                attrs: {
+                                  active: _vm.loading,
+                                  indeterminate: _vm.loading,
+                                  absolute: "",
+                                  bottom: "",
+                                  color: "deep-purple accent-4"
+                                }
+                              }),
+                              _vm._v(" "),
                               _c(
                                 "v-form",
                                 [
                                   _c("v-text-field", {
                                     attrs: {
+                                      color: "error",
                                       label: "Login",
                                       name: "login",
                                       "prepend-icon": "mdi-email-outline",
@@ -19817,6 +19969,7 @@ var render = function() {
                                   _vm._v(" "),
                                   _c("v-text-field", {
                                     attrs: {
+                                      color: "error",
                                       id: "password",
                                       label: "Password",
                                       name: "password",
@@ -19854,6 +20007,39 @@ var render = function() {
                               )
                             ],
                             1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-snackbar",
+                        {
+                          model: {
+                            value: _vm.snackbar,
+                            callback: function($$v) {
+                              _vm.snackbar = $$v
+                            },
+                            expression: "snackbar"
+                          }
+                        },
+                        [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(_vm.text) +
+                              "\n            "
+                          ),
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "pink", text: "" },
+                              on: {
+                                click: function($event) {
+                                  _vm.snackbar = false
+                                }
+                              }
+                            },
+                            [_vm._v("Close")]
                           )
                         ],
                         1
